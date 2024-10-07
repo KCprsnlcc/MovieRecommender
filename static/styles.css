@@ -329,6 +329,8 @@ img {
     overflow: hidden;
     transition: transform 0.3s;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .movie-card:hover {
@@ -359,16 +361,28 @@ img {
 }
 
 .movie-card h3 {
-    padding: 10px;
+    padding: 10px 10px 0 10px;
     font-size: 16px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.movie-card p {
-    padding: 0 10px 10px 10px;
+.movie-rating {
+    padding: 5px 10px;
     font-size: 14px;
+}
+
+.movie-overview {
+    padding: 5px 10px;
+    font-size: 14px;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .favorite-btn {
@@ -388,9 +402,7 @@ img {
 }
 
 .movie-card .favorite-btn {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+    margin-top: auto;
 }
 
 /* Pagination */
@@ -485,6 +497,34 @@ footer p {
     margin-bottom: 30px;
 }
 
+/* Star Rating Styles */
+.star-rating {
+    display: flex;
+    align-items: center;
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.star-rating i {
+    cursor: pointer;
+    color: #ccc;
+    transition: color 0.2s;
+}
+
+.star-rating i.bxs-star {
+    color: #FFD700; /* Gold color for filled stars */
+}
+
+.star-rating i:hover,
+.star-rating i:hover ~ i {
+    color: #FFD700;
+}
+
+/* Ensure that the hover effect doesn't override the selected rating */
+.star-rating i.selected {
+    color: #FFD700;
+}
+
 .rating-form {
     display: flex;
     align-items: center;
@@ -498,8 +538,9 @@ footer p {
 .rating-form .custom-select {
     flex: 1;
 }
-
-.rating-form button {
+/* Submit Button */
+.rating-form .submit-btn {
+    display: inline-block;
     padding: 10px 20px;
     background-color: var(--primary-color);
     color: #fff;
@@ -510,7 +551,7 @@ footer p {
     transition: background-color 0.3s;
 }
 
-.rating-form button:hover {
+.rating-form .submit-btn:hover {
     background-color: #b81d24;
 }
 
@@ -643,4 +684,20 @@ button::after, .auth-btn::after, .submit-btn::after, .favorite-btn::after {
 
 button:hover::after, .auth-btn:hover::after, .submit-btn:hover::after, .favorite-btn:hover::after {
     width: 200%;
+}
+/* Customize Toastr Notifications (Optional) */
+#toast-container > .toast-success {
+    background-color: #28a745;
+}
+
+#toast-container > .toast-error {
+    background-color: #dc3545;
+}
+
+#toast-container > .toast-warning {
+    background-color: #ffc107;
+}
+
+#toast-container > .toast-info {
+    background-color: #17a2b8;
 }

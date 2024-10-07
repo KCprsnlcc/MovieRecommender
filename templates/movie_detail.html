@@ -26,20 +26,19 @@
                     </a>
                 {% endif %}
                 <!-- User Rating -->
-                <form method="POST" action="{{ url_for('rate_movie') }}" class="rating-form">
-                    <input type="hidden" name="movie_id" value="{{ movie['id'] }}">
-                    <label for="rating">Your Rating:</label>
-                    <div class="custom-select">
-                        <select name="rating" required>
-                            <option value="">Rate</option>
+                <div class="user-rating-section">
+                    <h3>Your Rating:</h3>
+                    <form method="POST" action="{{ url_for('rate_movie') }}" class="rating-form" id="rating-form">
+                        <input type="hidden" name="movie_id" value="{{ movie['id'] }}">
+                        <input type="hidden" name="rating" id="rating-value" value="{{ movie['user_rating'] }}">
+                        <div class="star-rating">
                             {% for i in range(1, 6) %}
-                                <option value="{{ i }}" {% if movie['user_rating'] == i %}selected{% endif %}>{{ i }} Star{{ '' if i == 1 else 's' }}</option>
+                                <i class="bx {% if movie['user_rating'] and movie['user_rating'] >= i %}bxs-star selected{% else %}bx-star{% endif %}" data-value="{{ i }}"></i>
                             {% endfor %}
-                        </select>
-                        <i class='bx bx-chevron-down'></i>
-                    </div>
-                    <button type="submit" class="submit-btn"><i class='bx bx-star'></i> Submit</button>
-                </form>
+                        </div>
+                        <button type="submit" class="submit-btn"><i class='bx bx-star'></i> Submit</button>
+                    </form>
+                </div>
             </div>
         </div>
     </section>

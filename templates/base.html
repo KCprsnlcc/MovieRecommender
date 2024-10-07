@@ -7,10 +7,10 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <!-- Include Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Include Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <!-- Include Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <!-- Include Custom JS -->
-    <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -45,15 +45,6 @@
     <!-- Main Content -->
     <main>
         <div class="container">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="flash-messages">
-                        {% for category, message in messages %}
-                            <div class="flash {{ category }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
             {% block content %}{% endblock %}
         </div>
     </main>
@@ -63,5 +54,28 @@
             <p>&copy; {{ current_year }} MovieReX. All rights reserved.</p>
         </div>
     </footer>
+    <!-- Include jQuery and Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Include Custom JS -->
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <!-- Toastr Notifications Script -->
+    <script>
+        $(document).ready(function() {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        toastr.options = {
+                            "closeButton": true,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "timeOut": "5000",
+                        };
+                        toastr["{{ category }}"]("{{ message }}");
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        });
+    </script>
 </body>
 </html>

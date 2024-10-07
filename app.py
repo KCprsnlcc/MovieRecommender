@@ -108,7 +108,7 @@ def index():
         sort_by = pref['sort_by'] if pref['sort_by'] else 'rating_desc'
 
     # Pagination variables
-    per_page = 14  # Assuming you still want 14 movies per page
+    per_page = 14
     page = request.args.get('page', 1, type=int)
 
     # Build the query based on preferences
@@ -189,34 +189,32 @@ def index():
                            page=page,
                            total_pages=total_pages,
                            seen_hero=session.get('seen_hero', False))
+
 @app.route('/movie/<int:movie_id>')
 @login_required
 def movie_detail(movie_id):
     conn = get_db_connection()
     cursor = conn.cursor()
 
+    # Fetch movie details
     cursor.execute('SELECT * FROM movies WHERE id = ?', (movie_id,))
-    movie = cursor.fetchone()
-
-    if not movie:
-        flash("Movie not found.", "danger")
+    row = cursor.fetchone()
+    if row is None:
+        flash('Movie not found.', 'error')
         return redirect(url_for('index'))
 
-    # Check if the movie is in user's favorites
-    cursor.execute('SELECT * FROM favorites WHERE user_id = ? AND movie_id = ?', (session['user_id'], movie_id))
-    is_favorite = cursor.fetchone() is not None
+    movie = dict(row)
+
+    # Check if movie is in user's favorites
+    cursor.execute('SELECT 1 FROM favorites WHERE user_id = ? AND movie_id = ?', (session['user_id'], movie_id))
+    movie['is_favorite'] = cursor.fetchone() is not None
 
     # Get user's rating for the movie
     cursor.execute('SELECT rating FROM user_ratings WHERE user_id = ? AND movie_id = ?', (session['user_id'], movie_id))
-    user_rating = cursor.fetchone()
-    if user_rating:
-        user_rating = user_rating['rating']
+    rating_row = cursor.fetchone()
+    movie['user_rating'] = rating_row['rating'] if rating_row else None
 
     conn.close()
-
-    movie = dict(movie)
-    movie['is_favorite'] = is_favorite
-    movie['user_rating'] = user_rating
 
     return render_template('movie_detail.html', movie=movie)
 
@@ -227,33 +225,40 @@ def rate_movie():
     rating = request.form.get('rating')
 
     if not movie_id or not rating:
-        flash("Invalid data.", "danger")
-        return redirect(url_for('index'))
+        flash('Please select a rating before submitting.', 'warning')
+        return redirect(url_for('movie_detail', movie_id=movie_id))
+
+    try:
+        rating = int(rating)
+        if rating < 1 or rating > 5:
+            raise ValueError('Rating must be between 1 and 5.')
+    except ValueError as e:
+        flash(str(e), 'error')
+        return redirect(url_for('movie_detail', movie_id=movie_id))
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Check if the user has already rated the movie
-    cursor.execute('''
-        SELECT * FROM user_ratings WHERE user_id = ? AND movie_id = ?
-    ''', (session['user_id'], movie_id))
-    existing_rating = cursor.fetchone()
+    # Check if movie exists
+    cursor.execute('SELECT 1 FROM movies WHERE id = ?', (movie_id,))
+    if cursor.fetchone() is None:
+        flash('Movie not found.', 'error')
+        conn.close()
+        return redirect(url_for('index'))
 
-    if existing_rating:
+    # Check if user has already rated the movie
+    cursor.execute('SELECT 1 FROM user_ratings WHERE user_id = ? AND movie_id = ?', (session['user_id'], movie_id))
+    if cursor.fetchone():
         # Update existing rating
-        cursor.execute('''
-            UPDATE user_ratings SET rating = ? WHERE user_id = ? AND movie_id = ?
-        ''', (rating, session['user_id'], movie_id))
+        cursor.execute('UPDATE user_ratings SET rating = ? WHERE user_id = ? AND movie_id = ?', (rating, session['user_id'], movie_id))
     else:
         # Insert new rating
-        cursor.execute('''
-            INSERT INTO user_ratings (user_id, movie_id, rating)
-            VALUES (?, ?, ?)
-        ''', (session['user_id'], movie_id, rating))
+        cursor.execute('INSERT INTO user_ratings (user_id, movie_id, rating) VALUES (?, ?, ?)', (session['user_id'], movie_id, rating))
 
     conn.commit()
     conn.close()
-    flash("Rating submitted successfully.", "success")
+
+    flash('Your rating has been submitted.', 'success')
     return redirect(url_for('movie_detail', movie_id=movie_id))
 
 @app.route('/add_favorite/<int:movie_id>')
@@ -261,135 +266,115 @@ def rate_movie():
 def add_favorite(movie_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    # Check if already in favorites
-    cursor.execute('''
-        SELECT * FROM favorites WHERE user_id = ? AND movie_id = ?
-    ''', (session['user_id'], movie_id))
-    existing = cursor.fetchone()
-
-    if not existing:
-        cursor.execute('''
-            INSERT INTO favorites (user_id, movie_id)
-            VALUES (?, ?)
-        ''', (session['user_id'], movie_id))
+    cursor.execute('SELECT 1 FROM movies WHERE id = ?', (movie_id,))
+    if cursor.fetchone() is None:
+        flash('Movie not found.', 'error')
+        conn.close()
+        return redirect(url_for('index'))
+    try:
+        cursor.execute('INSERT INTO favorites (user_id, movie_id) VALUES (?, ?)', (session['user_id'], movie_id))
         conn.commit()
-        flash("Movie added to favorites.", "success")
-    else:
-        flash("Movie is already in your favorites.", "info")
-
+        flash('Movie added to favorites.', 'success')
+    except sqlite3.IntegrityError:
+        flash('Movie is already in your favorites.', 'info')
     conn.close()
-    return redirect(url_for('movie_detail', movie_id=movie_id))
+    return redirect(request.referrer or url_for('index'))
 
 @app.route('/remove_favorite/<int:movie_id>')
 @login_required
 def remove_favorite(movie_id):
     conn = get_db_connection()
     cursor = conn.cursor()
-
-    cursor.execute('''
-        DELETE FROM favorites WHERE user_id = ? AND movie_id = ?
-    ''', (session['user_id'], movie_id))
+    cursor.execute('DELETE FROM favorites WHERE user_id = ? AND movie_id = ?', (session['user_id'], movie_id))
     conn.commit()
     conn.close()
-    flash("Movie removed from favorites.", "success")
-    return redirect(url_for('favorites'))
+    flash('Movie removed from favorites.', 'success')
+    return redirect(request.referrer or url_for('index'))
 
 @app.route('/favorites')
 @login_required
 def favorites():
     conn = get_db_connection()
     cursor = conn.cursor()
-
     cursor.execute('''
-        SELECT movies.* FROM movies
+        SELECT movies.*
+        FROM movies
         JOIN favorites ON movies.id = favorites.movie_id
         WHERE favorites.user_id = ?
     ''', (session['user_id'],))
     rows = cursor.fetchall()
-
-    # Fetch user's ratings
-    cursor.execute('SELECT movie_id, rating FROM user_ratings WHERE user_id = ?', (session['user_id'],))
-    user_ratings = {row['movie_id']: row['rating'] for row in cursor.fetchall()}
-
     conn.close()
 
     movies = []
     for row in rows:
         movie = dict(row)
-        movie['user_rating'] = user_ratings.get(movie['id'], None)
+        movie['is_favorite'] = True
         movies.append(movie)
 
     return render_template('favorites.html', movies=movies)
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if 'user_id' in session:
-        return redirect(url_for('index'))
-
-    if request.method == 'POST':
-        username = request.form['username'].strip()
-        password = request.form['password']
-        confirm_password = request.form['confirm_password']
-
-        if not username or not password:
-            flash("Username and password are required.", "danger")
-            return redirect(url_for('register'))
-        if password != confirm_password:
-            flash("Passwords do not match.", "danger")
-            return redirect(url_for('register'))
-        
-        hashed_password = generate_password_hash(password)
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        try:
-            cursor.execute('''
-                INSERT INTO users (username, password)
-                VALUES (?, ?)
-            ''', (username, hashed_password))
-            conn.commit()
-            flash("Registration successful. Please log in.", "success")
-            return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
-            flash("Username already exists. Please choose a different one.", "danger")
-            return redirect(url_for('register'))
-        finally:
-            conn.close()
-    
-    return render_template('register.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'user_id' in session:
+        flash('You are already logged in.', 'info')
         return redirect(url_for('index'))
-    
+
     if request.method == 'POST':
-        username = request.form['username'].strip()
+        username = request.form['username']
         password = request.form['password']
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+        cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
         user = cursor.fetchone()
         conn.close()
 
         if user and check_password_hash(user['password'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
-            flash("Logged in successfully.", "success")
+            flash('Logged in successfully.', 'success')
             return redirect(url_for('index'))
         else:
-            flash("Invalid username or password.", "danger")
-            return redirect(url_for('login'))
-    
+            flash('Invalid username or password.', 'error')
+
     return render_template('login.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if 'user_id' in session:
+        flash('You are already registered and logged in.', 'info')
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+
+        if not username or not password or not confirm_password:
+            flash('Please fill out all fields.', 'warning')
+        elif password != confirm_password:
+            flash('Passwords do not match.', 'warning')
+        else:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            try:
+                hashed_password = generate_password_hash(password)
+                cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_password))
+                conn.commit()
+                conn.close()
+                flash('Registration successful. Please log in.', 'success')
+                return redirect(url_for('login'))
+            except sqlite3.IntegrityError:
+                conn.close()
+                flash('Username already exists.', 'warning')
+
+    return render_template('register.html')
 
 @app.route('/logout')
 @login_required
 def logout():
     session.clear()
-    flash("Logged out successfully.", "success")
+    flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
