@@ -6,6 +6,7 @@
         <div class="form-group">
             <label for="genres">Select Genres:</label>
             <select name="genres" id="genres" multiple required>
+                <option value="Any" {% if 'Any' in selected_genres %}selected{% endif %}>Any</option>
                 {% for genre in genres %}
                     <option value="{{ genre }}" {% if genre in selected_genres %}selected{% endif %}>{{ genre }}</option>
                 {% endfor %}

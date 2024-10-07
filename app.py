@@ -52,14 +52,14 @@ def index():
     if pref:
         # Use saved preferences
         selected_genres = pref['genres'].split(',') if pref['genres'] else []
-        min_year = pref['min_year'] if pref['min_year'] else 1900
-        max_year = pref['max_year'] if pref['max_year'] else 2024
-        min_rating = pref['min_rating'] if pref['min_rating'] else 0
-        selected_director = pref['director'] if pref['director'] else ''
-        sort_by = pref['sort_by'] if pref['sort_by'] else 'rating_desc'
+        # Handle 'Any' genre selection
+        if not selected_genres:
+            selected_genres = ['Any']
+        else:
+            selected_genres = [genre for genre in selected_genres if genre]
     else:
         # Default preferences
-        selected_genres = []
+        selected_genres = ['Any']
         min_year = 1900
         max_year = 2024
         min_rating = 0
@@ -69,6 +69,9 @@ def index():
     if request.method == 'POST':
         # Update preferences based on form input
         selected_genres = request.form.getlist('genres')
+        # Handle 'Any' genre selection
+        if 'Any' in selected_genres:
+            selected_genres = []
         min_year = request.form.get('min_year', 1900)
         max_year = request.form.get('max_year', 2024)
         min_rating = request.form.get('min_rating', 0)
@@ -94,6 +97,14 @@ def index():
         # Redirect to avoid form resubmission
         return redirect(url_for('index'))
 
+    # If preferences are loaded from database, ensure other variables are set
+    if pref:
+        min_year = pref['min_year'] if pref['min_year'] else 1900
+        max_year = pref['max_year'] if pref['max_year'] else 2024
+        min_rating = pref['min_rating'] if pref['min_rating'] else 0
+        selected_director = pref['director'] if pref['director'] else ''
+        sort_by = pref['sort_by'] if pref['sort_by'] else 'rating_desc'
+
     # Pagination variables
     per_page = 10
     page = request.args.get('page', 1, type=int)
@@ -102,11 +113,13 @@ def index():
     base_query = "FROM movies WHERE 1=1"
     params = []
 
-    if selected_genres:
+    if selected_genres and 'Any' not in selected_genres:
         genre_conditions = " OR ".join(["Genre LIKE ?"] * len(selected_genres))
         base_query += f" AND ({genre_conditions})"
         for genre in selected_genres:
             params.append(f"%{genre}%")
+    # If 'Any' is selected, do not add genre filter
+
     if min_year:
         base_query += " AND Released_Year >= ?"
         params.append(min_year)
