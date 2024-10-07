@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Your Favorite Movies</h2>
+    {% if movies %}
+        <div class="movie-list" id="movie-list">
+            {% for movie in movies %}
+                <div class="movie-card">
+                    <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}">
+                        <img src="{{ movie['Poster_Link'] }}" alt="{{ movie['Series_Title'] }} Poster">
+                    </a>
+                    <h3>{{ movie['Series_Title'] }} ({{ movie['Released_Year'] }})</h3>
+                    <p><strong>Rating:</strong> {{ movie['IMDB_Rating'] }}/10</p>
+                    <p><strong>Genre:</strong> {{ movie['Genre'] }}</p>
+                    <!-- Remove from Favorites -->
+                    <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">Remove from Favorites</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no favorite movies yet.</p>
+    {% endif %}
+{% endblock %}

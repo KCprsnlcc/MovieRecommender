@@ -11,7 +11,8 @@ def create_tables(conn):
     cursor.execute('DROP TABLE IF EXISTS movies')
     cursor.execute('DROP TABLE IF EXISTS users')
     cursor.execute('DROP TABLE IF EXISTS preferences')
-
+    cursor.execute('DROP TABLE IF EXISTS user_ratings')
+    cursor.execute('DROP TABLE IF EXISTS favorites')
     # Create movies table
     cursor.execute('''
         CREATE TABLE movies (
@@ -56,6 +57,29 @@ def create_tables(conn):
             director TEXT,
             sort_by TEXT,
             FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
+    
+    # Create user_ratings table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_ratings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            movie_id INTEGER NOT NULL,
+            rating INTEGER NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (movie_id) REFERENCES movies(id)
+        )
+    ''')
+
+    # Create favorites table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS favorites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            movie_id INTEGER NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (movie_id) REFERENCES movies(id)
         )
     ''')
     conn.commit()

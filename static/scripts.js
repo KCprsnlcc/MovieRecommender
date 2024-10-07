@@ -55,4 +55,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            const movieList = document.getElementById('movie-list');
+            const movieCards = movieList.querySelectorAll('.movie-card');
+    
+            searchInput.addEventListener('keyup', function() {
+                const filter = searchInput.value.toLowerCase();
+    
+                movieCards.forEach(function(card) {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    if (title.includes(filter)) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
     

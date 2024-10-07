@@ -231,4 +231,115 @@ body {
             display: none;
         }
     }
-    
+    /* Pagination Controls */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 4px;
+    background-color: #1e3a40;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #689e4b;
+}
+
+.pagination .current {
+    background-color: #689e4b;
+    font-weight: bold;
+}
+
+.pagination .prev, .pagination .next {
+    font-weight: bold;
+}
+
+/* Search Box */
+.search-box {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #0e2326;
+    color: #FFFFFF;
+}
+
+/* Favorite Button */
+.favorite-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #689e4b;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.favorite-btn:hover {
+    background-color: #55833b;
+}
+
+/* Rating Form */
+.rating-form {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.rating-form select {
+    width: auto;
+    padding: 5px;
+    margin-right: 5px;
+    background-color: #0e2326;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+}
+
+.rating-form button {
+    padding: 5px 10px;
+    background-color: #689e4b;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.rating-form button:hover {
+    background-color: #55833b;
+}
+
+/* Movie Detail Page */
+.movie-detail {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.detail-poster {
+    width: 300px;
+    height: auto;
+    border-radius: 8px;
+    margin-right: 20px;
+}
+
+.detail-info {
+    flex: 1;
+    min-width: 250px;
+}
+
+.detail-info h2 {
+    margin-top: 0;
+}
+
+.detail-info p {
+    margin: 10px 0;
+}

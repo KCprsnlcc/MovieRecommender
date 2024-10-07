@@ -54,20 +54,48 @@
         <div class="movies">
             {% if movies %}
                 <h2>Recommended Movies:</h2>
-                <div class="movie-list">
+
+                <!-- Search Input -->
+                <input type="text" id="search-input" placeholder="Search movies..." class="search-box">
+
+                <div class="movie-list" id="movie-list">
                     {% for movie in movies %}
                         <div class="movie-card">
-                            <img src="{{ movie['Poster_Link'] }}" alt="{{ movie['Series_Title'] }} Poster">
+                            <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}">
+                                <img src="{{ movie['Poster_Link'] }}" alt="{{ movie['Series_Title'] }} Poster">
+                            </a>
                             <h3>{{ movie['Series_Title'] }} ({{ movie['Released_Year'] }})</h3>
                             <p><strong>Rating:</strong> {{ movie['IMDB_Rating'] }}/10</p>
                             <p><strong>Genre:</strong> {{ movie['Genre'] }}</p>
-                            <!-- Optional: Include Director or Stars if needed -->
-                            <!-- <p><strong>Director:</strong> {{ movie['Director'] }}</p> -->
-                            <!-- Overview can be included or excluded based on preference -->
-                            <p class="overview">{{ movie['Overview'] }}</p>
+                            <!-- Add to Favorites -->
+                            {% if movie['is_favorite'] %}
+                                <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">Remove from Favorites</a>
+                            {% else %}
+                                <a href="{{ url_for('add_favorite', movie_id=movie['id']) }}" class="favorite-btn">Add to Favorites</a>
+                            {% endif %}
                         </div>
                     {% endfor %}
                 </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination">
+                    {% if page > 1 %}
+                        <a href="?page={{ page - 1 }}" class="prev">Previous</a>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                        {% if p == page %}
+                            <span class="current">{{ p }}</span>
+                        {% else %}
+                            <a href="?page={{ p }}">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                        <a href="?page={{ page + 1 }}" class="next">Next</a>
+                    {% endif %}
+                </div>
+
             {% else %}
                 <h2>No recommendations available based on your preferences.</h2>
             {% endif %}
