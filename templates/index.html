@@ -15,6 +15,8 @@
     <section id="preferences" class="preferences-section">
         <h2>Set Your Preferences</h2>
         <form method="POST" action="{{ url_for('index') }}" class="preferences-form">
+            <!-- Form fields with icons -->
+            <!-- Genre Selection -->
             <div class="form-group">
                 <label for="genres">Genres:</label>
                 <div class="custom-select">
@@ -28,7 +30,7 @@
                 </div>
             </div>
 
-            <!-- Other form fields with icons -->
+            <!-- Min Year -->
             <div class="form-group">
                 <label for="min_year">Min Release Year:</label>
                 <div class="input-with-icon">
@@ -37,6 +39,7 @@
                 </div>
             </div>
 
+            <!-- Max Year -->
             <div class="form-group">
                 <label for="max_year">Max Release Year:</label>
                 <div class="input-with-icon">
@@ -45,6 +48,7 @@
                 </div>
             </div>
 
+            <!-- Min Rating -->
             <div class="form-group">
                 <label for="min_rating">Min IMDB Rating:</label>
                 <div class="input-with-icon">
@@ -53,6 +57,7 @@
                 </div>
             </div>
 
+            <!-- Director -->
             <div class="form-group">
                 <label for="director">Director:</label>
                 <div class="custom-select">
@@ -66,6 +71,7 @@
                 </div>
             </div>
 
+            <!-- Sort By -->
             <div class="form-group">
                 <label for="sort_by">Sort By:</label>
                 <div class="custom-select">
@@ -109,7 +115,12 @@
                                     </div>
                                 </div>
                             </a>
-                            <h3 title="{{ movie['Series_Title'] }}">{{ movie['Series_Title'] | truncate(20, True) }}</h3>
+                            <h3 title="{{ movie['Series_Title'] }}">
+                                {{ movie['Series_Title'] | truncate(20, True) }}
+                                {% if movie['Released_Year'] %}
+                                    <span class="release-year">({{ movie['Released_Year'] }})</span>
+                                {% endif %}
+                            </h3>
                             <p class="movie-rating"><i class='bx bxs-star'></i> {{ movie['IMDB_Rating'] }}/10</p>
                             <p class="movie-overview">{{ movie['Overview'] | truncate(150) }}</p>
                             <!-- Add to Favorites -->

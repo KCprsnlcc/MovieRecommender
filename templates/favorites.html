@@ -18,8 +18,14 @@
                                 </div>
                             </div>
                         </a>
-                        <h3 title="{{ movie['Series_Title'] }}">{{ movie['Series_Title'] | truncate(20, True) }}</h3>
-                        <p><i class='bx bxs-star'></i> {{ movie['IMDB_Rating'] }}/10</p>
+                        <h3 title="{{ movie['Series_Title'] }}">
+                            {{ movie['Series_Title'] | truncate(20, True) }}
+                            {% if movie['Released_Year'] %}
+                                <span class="release-year">({{ movie['Released_Year'] }})</span>
+                            {% endif %}
+                        </h3>
+                        <p class="movie-rating"><i class='bx bxs-star'></i> {{ movie['IMDB_Rating'] }}/10</p>
+                        <p class="movie-overview">{{ movie['Overview'] | truncate(150) }}</p>
                         <!-- Remove from Favorites -->
                         <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">
                             <i class='bx bxs-heart'></i> Remove
