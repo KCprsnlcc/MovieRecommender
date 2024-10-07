@@ -1,82 +1,107 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Find Your Movie Recommendations</h2>
-    <form method="POST" action="{{ url_for('index') }}">
-        <div class="form-group">
-            <label for="genres">Select Genres:</label>
+<h2>Find Your Movie Recommendations</h2>
+<form method="POST" action="{{ url_for('index') }}" class="preferences-form">
+    <div class="form-group">
+        <label for="genres">Select Genres:</label>
+        <div class="custom-select">
             <select name="genres" id="genres" multiple required>
                 <option value="Any" {% if 'Any' in selected_genres %}selected{% endif %}>Any</option>
                 {% for genre in genres %}
                     <option value="{{ genre }}" {% if genre in selected_genres %}selected{% endif %}>{{ genre }}</option>
                 {% endfor %}
             </select>
+            <i class='bx bx-chevron-down'></i>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="min_year">Minimum Release Year:</label>
+    <!-- Other form fields with icons -->
+    <div class="form-group">
+        <label for="min_year">Minimum Release Year:</label>
+        <div class="input-with-icon">
             <input type="number" id="min_year" name="min_year" min="1900" max="2024" value="{{ min_year }}" required>
+            <i class='bx bx-calendar'></i>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="max_year">Maximum Release Year:</label>
+    <div class="form-group">
+        <label for="max_year">Maximum Release Year:</label>
+        <div class="input-with-icon">
             <input type="number" id="max_year" name="max_year" min="1900" max="2024" value="{{ max_year }}" required>
+            <i class='bx bx-calendar'></i>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="min_rating">Minimum IMDB Rating (out of 10):</label>
+    <div class="form-group">
+        <label for="min_rating">Minimum IMDB Rating (out of 10):</label>
+        <div class="input-with-icon">
             <input type="number" id="min_rating" name="min_rating" min="0" max="10" step="0.1" value="{{ min_rating }}" required>
+            <i class='bx bx-star'></i>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="director">Director:</label>
+    <div class="form-group">
+        <label for="director">Director:</label>
+        <div class="custom-select">
             <select name="director" id="director">
                 <option value="">Any</option>
                 {% for director in directors %}
                     <option value="{{ director }}" {% if director == selected_director %}selected{% endif %}>{{ director }}</option>
                 {% endfor %}
             </select>
+            <i class='bx bx-chevron-down'></i>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="sort_by">Sort By:</label>
+    <div class="form-group">
+        <label for="sort_by">Sort By:</label>
+        <div class="custom-select">
             <select name="sort_by" id="sort_by" required>
                 <option value="rating_desc" {% if sort_by == 'rating_desc' %}selected{% endif %}>Rating: High to Low</option>
                 <option value="rating_asc" {% if sort_by == 'rating_asc' %}selected{% endif %}>Rating: Low to High</option>
                 <option value="year_desc" {% if sort_by == 'year_desc' %}selected{% endif %}>Year: Newest First</option>
                 <option value="year_asc" {% if sort_by == 'year_asc' %}selected{% endif %}>Year: Oldest First</option>
             </select>
+            <i class='bx bx-chevron-down'></i>
         </div>
+    </div>
 
-        <button type="submit">Get Recommendations</button>
-    </form>
+    <button type="submit"><i class='bx bx-search'></i> Get Recommendations</button>
+</form>
 
-    {% if movies is not none %}
-        <div class="movies">
-            {% if movies %}
-                <h2>Recommended Movies:</h2>
+{% if movies is not none %}
+    <div class="movies">
+        {% if movies %}
+            <h2>Recommended Movies:</h2>
 
-                <!-- Search Input -->
+            <!-- Search Input -->
+            <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search movies..." class="search-box">
+                <i class='bx bx-search-alt-2'></i>
+            </div>
 
-                <div class="movie-list" id="movie-list">
-                    {% for movie in movies %}
-                        <div class="movie-card">
-                            <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}">
-                                <img src="{{ movie['Poster_Link'] }}" alt="{{ movie['Series_Title'] }} Poster">
+            <div class="movie-grid" id="movie-list">
+                {% for movie in movies %}
+                    <div class="movie-card">
+                        <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}">
+                            <img src="{{ movie['Poster_Link'] }}" alt="{{ movie['Series_Title'] }} Poster">
+                        </a>
+                        <h3 title="{{ movie['Series_Title'] }}">{{ movie['Series_Title'] | truncate(20, True) }}</h3>
+                        <p><strong>Rating:</strong> {{ movie['IMDB_Rating'] }}/10</p>
+                        <!-- Add to Favorites -->
+                        {% if movie['is_favorite'] %}
+                            <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">
+                                <i class='bx bxs-heart'></i> Remove from Favorites
                             </a>
-                            <h3>{{ movie['Series_Title'] }} ({{ movie['Released_Year'] }})</h3>
-                            <p><strong>Rating:</strong> {{ movie['IMDB_Rating'] }}/10</p>
-                            <p><strong>Genre:</strong> {{ movie['Genre'] }}</p>
-                            <!-- Add to Favorites -->
-                            {% if movie['is_favorite'] %}
-                                <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">Remove from Favorites</a>
-                            {% else %}
-                                <a href="{{ url_for('add_favorite', movie_id=movie['id']) }}" class="favorite-btn">Add to Favorites</a>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </div>
+                        {% else %}
+                            <a href="{{ url_for('add_favorite', movie_id=movie['id']) }}" class="favorite-btn">
+                                <i class='bx bx-heart'></i> Add to Favorites
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div
 
                 <!-- Truncated Pagination Controls -->
                 <div class="pagination">

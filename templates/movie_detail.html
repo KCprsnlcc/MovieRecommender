@@ -12,9 +12,13 @@
             <p><strong>Overview:</strong> {{ movie['Overview'] }}</p>
             <!-- Add or Remove from Favorites -->
             {% if movie['is_favorite'] %}
-                <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">Remove from Favorites</a>
+                <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">
+                    <i class='bx bxs-heart'></i> Remove from Favorites
+                </a>
             {% else %}
-                <a href="{{ url_for('add_favorite', movie_id=movie['id']) }}" class="favorite-btn">Add to Favorites</a>
+                <a href="{{ url_for('add_favorite', movie_id=movie['id']) }}" class="favorite-btn">
+                    <i class='bx bx-heart'></i> Add to Favorites
+                </a>
             {% endif %}
             <!-- User Rating -->
             <form method="POST" action="{{ url_for('rate_movie') }}" class="rating-form">
@@ -26,7 +30,7 @@
                         <option value="{{ i }}" {% if movie['user_rating'] == i %}selected{% endif %}>{{ i }} Star{{ '' if i == 1 else 's' }}</option>
                     {% endfor %}
                 </select>
-                <button type="submit">Submit</button>
+                <button type="submit"><i class='bx bx-star'></i> Submit</button>
             </form>
         </div>
     </div>

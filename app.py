@@ -106,7 +106,7 @@ def index():
         sort_by = pref['sort_by'] if pref['sort_by'] else 'rating_desc'
 
     # Pagination variables
-    per_page = 10
+    per_page = 14  # Updated from 10 to 14
     page = request.args.get('page', 1, type=int)
 
     # Build the query based on preferences

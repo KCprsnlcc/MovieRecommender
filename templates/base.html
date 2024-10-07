@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Movie Recommender System</title>
+    <!-- Include Boxicons CSS -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="{{ url_for('static', filename='scripts.js') }}" defer></script>
 </head>
@@ -12,12 +14,12 @@
             <h1><a href="{{ url_for('index') }}">Movie Recommender</a></h1>
             <ul>
                 {% if session.get('user_id') %}
-                    <li>Hello, {{ session['username'] }}</li>
-                    <li><a href="{{ url_for('favorites') }}">Favorites</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    <li><i class='bx bx-user'></i> Hello, {{ session['username'] }}</li>
+                    <li><a href="{{ url_for('favorites') }}"><i class='bx bx-heart'></i> Favorites</a></li>
+                    <li><a href="{{ url_for('logout') }}"><i class='bx bx-log-out'></i> Logout</a></li>
                 {% else %}
-                    <li><a href="{{ url_for('login') }}">Login</a></li>
-                    <li><a href="{{ url_for('register') }}">Register</a></li>
+                    <li><a href="{{ url_for('login') }}"><i class='bx bx-log-in'></i> Login</a></li>
+                    <li><a href="{{ url_for('register') }}"><i class='bx bx-user-plus'></i> Register</a></li>
                 {% endif %}
                 <!-- Dark Mode Toggle -->
                 <li>
