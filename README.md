@@ -1,6 +1,8 @@
-# Movie Recommender System
+# MovieReX
 
-A **Movie Recommender System** built with **Python Flask**, **SQLite**, and **Bootstrap**. This application allows users to register, set their movie preferences, and receive personalized movie recommendations. Users can also rate movies, add them to their favorites list, and browse movies with features like pagination and real-time search filtering.
+![MovieReX Screenshot](screenshots/homepage.png)
+
+**MovieReX** is a sophisticated **Movie Recommender System** built with **Python Flask**, **SQLite**, and **Bootstrap**. Designed to deliver personalized movie recommendations, MovieReX allows users to register, set their movie preferences, rate movies, and curate a favorites list. With features like an interactive star rating system, real-time search filtering, and responsive design, MovieReX ensures an engaging and seamless user experience.
 
 ## Table of Contents
 
@@ -12,20 +14,24 @@ A **Movie Recommender System** built with **Python Flask**, **SQLite**, and **Bo
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
+- [Virtual Environment Setup](#virtual-environment-setup)
+- [Dataset Source](#dataset-source)
 
 ---
 
 ## Features
 
 - **User Authentication**: Secure registration and login system.
-- **User Preferences**: Users can set preferences like genres, release year range, minimum IMDB rating, and director.
-- **Movie Recommendations**: Personalized recommendations based on user preferences.
-- **Pagination**: Efficient navigation through multiple pages of movie recommendations with truncated pagination controls.
-- **Real-time Search Filtering**: Instant filtering of displayed movies as the user types.
-- **User Ratings**: Users can rate movies, and these ratings are stored for personalized recommendations.
-- **Favorites List**: Users can add movies to a favorites list for easy access.
-- **Detailed Movie Pages**: View detailed information about each movie, including overview, cast, and user rating.
-- **Responsive Design**: Sleek and minimalistic flat UI design with responsive elements for different screen sizes.
+- **User Preferences**: Customize preferences including genres, release year range, minimum IMDB rating, and director.
+- **Interactive Star Rating System**: Rate movies using an intuitive and visually appealing star interface.
+- **Release Date Display**: View the release year directly beside each movie title for quick reference.
+- **Movie Recommendations**: Receive personalized recommendations based on your specified preferences.
+- **Pagination**: Navigate through multiple pages of movie recommendations with efficient pagination controls.
+- **Real-time Search Filtering**: Instantly filter displayed movies as you type in the search box.
+- **Favorites List**: Add movies to a favorites list for easy access and management.
+- **Detailed Movie Pages**: Access comprehensive information about each movie, including overview, cast, and user ratings.
+- **Toaster Notifications**: Receive non-intrusive, real-time notifications for authentication, favorites, and rating actions using Toastr.
+- **Responsive Design**: Enjoy a sleek and minimalistic flat UI design that adapts seamlessly to various screen sizes.
 
 ---
 
@@ -141,7 +147,7 @@ With the virtual environment activated and dependencies installed, you can run t
 python app.py
 ```
 
-The application will start on `http://127.0.0.1:5000/`. Open this URL in your web browser to access the application.
+The application will start on `http://127.0.0.1:5000/`. Open this URL in your web browser to access MovieReX.
 
 ---
 
@@ -149,10 +155,10 @@ The application will start on `http://127.0.0.1:5000/`. Open this URL in your we
 
 1. **Register**: Create a new user account by clicking on the "Register" link.
 2. **Login**: Log in with your username and password.
-3. **Set Preferences**: On the home page, set your movie preferences and click "Get Recommendations".
+3. **Set Preferences**: On the home page, set your movie preferences and click "Find Movies".
 4. **Browse Movies**: View recommended movies, use pagination controls to navigate, and search to filter movies.
 5. **View Details**: Click on a movie to view detailed information.
-6. **Rate Movies**: Rate movies on their detail pages.
+6. **Rate Movies**: Rate movies on their detail pages using the interactive star rating system.
 7. **Manage Favorites**: Add movies to your favorites list for easy access.
 8. **Logout**: Click "Logout" in the navigation bar to end your session.
 
@@ -161,7 +167,7 @@ The application will start on `http://127.0.0.1:5000/`. Open this URL in your we
 ## Project Structure
 
 ```
-movie_recommender_system/
+MovieRecommender/
 │
 ├── app.py                   # Main Flask application
 ├── import_data.py           # Script to import movie data into SQLite database
@@ -175,9 +181,11 @@ movie_recommender_system/
 │   ├── register.html        # Registration page template
 │   ├── favorites.html       # Favorites page template
 │   └── movie_detail.html    # Movie detail page template
-└── static/
-    ├── styles.css           # CSS styles
-    └── scripts.js           # JavaScript scripts
+├── static/
+│   ├── styles.css           # CSS styles
+│   └── scripts.js           # JavaScript scripts
+└── screenshots/
+    └── homepage.png         # Screenshot for GitHub preview
 ```
 
 ---
@@ -200,15 +208,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-# Instructions for Python Virtual Environment
+## Virtual Environment Setup
 
-## What is a Virtual Environment?
+### What is a Virtual Environment?
 
 A Python virtual environment is an isolated environment that allows you to install packages and dependencies specific to a project without affecting the global Python installation. This ensures that projects are independent and helps prevent version conflicts between packages.
 
-## Setting Up a Virtual Environment
+### Setting Up a Virtual Environment
 
-### 1. Ensure Python is Installed
+#### 1. Ensure Python is Installed
 
 Make sure you have Python 3.7 or higher installed on your system. You can check your Python version by running:
 
@@ -222,23 +230,23 @@ or
 python3 --version
 ```
 
-### 2. Create a Virtual Environment
+#### 2. Create a Virtual Environment
 
 Navigate to your project directory:
 
 ```bash
-cd path/to/movie_recommender_system
+cd path/to/MovieRecommender
 ```
 
 Create a virtual environment named `venv`:
 
-#### On Windows:
+##### On Windows:
 
 ```bash
 python -m venv venv
 ```
 
-#### On macOS and Linux:
+##### On macOS and Linux:
 
 ```bash
 python3 -m venv venv
@@ -246,15 +254,15 @@ python3 -m venv venv
 
 This will create a new directory called `venv` in your project folder, containing the virtual environment.
 
-### 3. Activate the Virtual Environment
+#### 3. Activate the Virtual Environment
 
-#### On Windows:
+##### On Windows:
 
 ```bash
 venv\Scripts\activate
 ```
 
-#### On macOS and Linux:
+##### On macOS and Linux:
 
 ```bash
 source venv/bin/activate
@@ -262,7 +270,7 @@ source venv/bin/activate
 
 After activation, your command prompt or terminal will typically show the name of the virtual environment, indicating that it's active.
 
-### 4. Install Required Packages
+#### 4. Install Required Packages
 
 With the virtual environment activated, install the project's dependencies:
 
@@ -276,7 +284,7 @@ If `requirements.txt` is not available, you can install packages individually:
 pip install Flask Werkzeug pandas
 ```
 
-### 5. Deactivate the Virtual Environment
+#### 5. Deactivate the Virtual Environment
 
 When you're done working on the project, you can deactivate the virtual environment:
 
@@ -284,13 +292,13 @@ When you're done working on the project, you can deactivate the virtual environm
 deactivate
 ```
 
-## Benefits of Using a Virtual Environment
+### Benefits of Using a Virtual Environment
 
 - **Isolation**: Keeps project dependencies separate.
 - **Consistency**: Ensures that the project runs with the same package versions, avoiding compatibility issues.
 - **Manage Multiple Projects**: Allows you to work on multiple projects with different dependencies simultaneously.
 
-## Additional Tips
+### Additional Tips
 
 - **Reproducing Environments**: If you share your project, others can recreate the same environment by creating a virtual environment and installing packages from `requirements.txt`.
 - **Updating `requirements.txt`**: If you install new packages, update `requirements.txt`:
@@ -308,6 +316,8 @@ deactivate
 
   The path should point to the `venv` directory.
 
+---
+
 ## Dataset Source
 
 This project utilizes a dataset sourced from the [IMDB Top 1000 Movies Analysis](https://github.com/F-odt/IMDB_Top1000_Movies_Analysis) repository by [F-odt](https://github.com/F-odt).
@@ -317,7 +327,7 @@ This project utilizes a dataset sourced from the [IMDB Top 1000 Movies Analysis]
 
 ### Acknowledgment
 
-We sincerely thank **F-odt** for providing the dataset used in this project. The dataset has been instrumental in building and testing the Movie Recommender System.
+We sincerely thank **F-odt** for providing the dataset used in this project. The dataset has been instrumental in building and testing MovieReX.
 
 ### Dataset License and Usage
 
