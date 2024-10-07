@@ -2,7 +2,7 @@
 
 ![MovieReX Screenshot](screenshots/homepage.png)
 
-**MovieReX** is a sophisticated **Movie Recommender System** built with **Python Flask**, **SQLite**, and **Bootstrap**. Designed to deliver personalized movie recommendations, MovieReX allows users to register, set their movie preferences, rate movies, and curate a favorites list. With features like an interactive star rating system, real-time search filtering, and responsive design, MovieReX ensures an engaging and seamless user experience.
+**MovieReX** is a sophisticated **Movie Recommender System** built with **Python Flask**, **SQLite**, and **Bootstrap**. Designed to deliver personalized movie recommendations, MovieReX allows users to register, set their movie preferences, rate movies, and curate a favorites list. With features like an interactive star rating system, real-time search filtering, and responsive design, MovieReX ensures an engaging user experience.
 
 ## Table of Contents
 
@@ -26,12 +26,12 @@
 - **Interactive Star Rating System**: Rate movies using an intuitive and visually appealing star interface.
 - **Release Date Display**: View the release year directly beside each movie title for quick reference.
 - **Movie Recommendations**: Receive personalized recommendations based on your specified preferences.
-- **Pagination**: Navigate through multiple pages of movie recommendations with efficient pagination controls.
+- **Pagination**: Navigate through multiple pages of movie recommendations with pagination controls.
 - **Real-time Search Filtering**: Instantly filter displayed movies as you type in the search box.
 - **Favorites List**: Add movies to a favorites list for easy access and management.
 - **Detailed Movie Pages**: Access comprehensive information about each movie, including overview, cast, and user ratings.
 - **Toaster Notifications**: Receive non-intrusive, real-time notifications for authentication, favorites, and rating actions using Toastr.
-- **Responsive Design**: Enjoy a sleek and minimalistic flat UI design that adapts seamlessly to various screen sizes.
+- **Responsive Design**: Enjoy a sleek and minimalistic flat UI design that adapts to various screen sizes.
 
 ---
 
