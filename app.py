@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -99,48 +99,49 @@ def index():
     page = request.args.get('page', 1, type=int)
 
     # Build the query based on preferences
-    query = "SELECT COUNT(*) FROM movies WHERE 1=1"
+    base_query = "FROM movies WHERE 1=1"
     params = []
 
     if selected_genres:
         genre_conditions = " OR ".join(["Genre LIKE ?"] * len(selected_genres))
-        query += f" AND ({genre_conditions})"
+        base_query += f" AND ({genre_conditions})"
         for genre in selected_genres:
             params.append(f"%{genre}%")
     if min_year:
-        query += " AND Released_Year >= ?"
+        base_query += " AND Released_Year >= ?"
         params.append(min_year)
     if max_year:
-        query += " AND Released_Year <= ?"
+        base_query += " AND Released_Year <= ?"
         params.append(max_year)
     if min_rating:
-        query += " AND IMDB_Rating >= ?"
+        base_query += " AND IMDB_Rating >= ?"
         params.append(min_rating)
     if selected_director:
-        query += " AND Director = ?"
+        base_query += " AND Director = ?"
         params.append(selected_director)
 
     # Execute count query to get total results
-    cursor.execute(query, params)
+    count_query = "SELECT COUNT(*) " + base_query
+    cursor.execute(count_query, params)
     total_results = cursor.fetchone()[0]
     total_pages = ceil(total_results / per_page)
 
     # Modify query to fetch limited results for the current page
-    query = query.replace("COUNT(*)", "*")
+    select_query = "SELECT * " + base_query
     # Sorting
     if sort_by == 'rating_desc':
-        query += " ORDER BY IMDB_Rating DESC, Released_Year DESC"
+        select_query += " ORDER BY IMDB_Rating DESC, Released_Year DESC"
     elif sort_by == 'rating_asc':
-        query += " ORDER BY IMDB_Rating ASC, Released_Year ASC"
+        select_query += " ORDER BY IMDB_Rating ASC, Released_Year ASC"
     elif sort_by == 'year_desc':
-        query += " ORDER BY Released_Year DESC, IMDB_Rating DESC"
+        select_query += " ORDER BY Released_Year DESC, IMDB_Rating DESC"
     elif sort_by == 'year_asc':
-        query += " ORDER BY Released_Year ASC, IMDB_Rating ASC"
+        select_query += " ORDER BY Released_Year ASC, IMDB_Rating ASC"
 
-    query += " LIMIT ? OFFSET ?"
+    select_query += " LIMIT ? OFFSET ?"
     params.extend([per_page, (page - 1) * per_page])
 
-    cursor.execute(query, params)
+    cursor.execute(select_query, params)
     rows = cursor.fetchall()
 
     # Fetch user's favorite movies
