@@ -94,6 +94,8 @@ def index():
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (session['user_id'], genres_str, min_year, max_year, min_rating, selected_director, sort_by))
         conn.commit()
+        # Set the flag that user has interacted with the hero section
+        session['seen_hero'] = True
         # Redirect to avoid form resubmission
         return redirect(url_for('index'))
 
@@ -106,7 +108,7 @@ def index():
         sort_by = pref['sort_by'] if pref['sort_by'] else 'rating_desc'
 
     # Pagination variables
-    per_page = 14  # Updated from 10 to 14
+    per_page = 14  # Assuming you still want 14 movies per page
     page = request.args.get('page', 1, type=int)
 
     # Build the query based on preferences
@@ -185,8 +187,8 @@ def index():
                            selected_director=selected_director,
                            sort_by=sort_by,
                            page=page,
-                           total_pages=total_pages)
-
+                           total_pages=total_pages,
+                           seen_hero=session.get('seen_hero', False))
 @app.route('/movie/<int:movie_id>')
 @login_required
 def movie_detail(movie_id):

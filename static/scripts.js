@@ -1,4 +1,24 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Theme Toggle Logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const currentTheme = localStorage.getItem('theme');
+
+    if (currentTheme === 'light') {
+        document.body.classList.add('light-theme');
+        themeToggle.checked = true;
+    }
+
+    themeToggle.addEventListener('change', function() {
+        if (this.checked) {
+            document.body.classList.add('light-theme');
+            localStorage.setItem('theme', 'light');
+        } else {
+            document.body.classList.remove('light-theme');
+            localStorage.setItem('theme', 'dark');
+        }
+    });
+
+    // Search Functionality
     const searchInput = document.getElementById('search-input');
     if (searchInput) {
         const movieList = document.getElementById('movie-list');
@@ -18,22 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Theme Toggle Logic
-    const themeToggle = document.getElementById('theme-toggle');
-    const currentTheme = localStorage.getItem('theme');
-
-    if (currentTheme === 'light') {
-        document.body.classList.add('light-theme');
-        themeToggle.checked = true;
+    // Smooth Scroll to Preferences
+    const heroBtn = document.querySelector('.hero-btn');
+    if (heroBtn) {
+        heroBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#preferences').scrollIntoView({ behavior: 'smooth' });
+        });
     }
-
-    themeToggle.addEventListener('change', function() {
-        if (this.checked) {
-            document.body.classList.add('light-theme');
-            localStorage.setItem('theme', 'light');
-        } else {
-            document.body.classList.remove('light-theme');
-            localStorage.setItem('theme', 'dark');
-        }
-    });
 });

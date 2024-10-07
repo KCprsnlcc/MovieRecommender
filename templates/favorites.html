@@ -1,24 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Your Favorite Movies</h2>
-    {% if movies %}
-        <div class="movie-grid" id="movie-list">
-            {% for movie in movies %}
-                <div class="movie-card">
-                    <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}">
-                        <img src="{{ movie['Poster_Link'] }}" alt="{{ movie['Series_Title'] }} Poster">
-                    </a>
-                    <h3 title="{{ movie['Series_Title'] }}">{{ movie['Series_Title'] | truncate(20, True) }}</h3>
-                    <p><strong>Rating:</strong> {{ movie['IMDB_Rating'] }}/10</p>
-                    <!-- Remove from Favorites -->
-                    <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">
-                        <i class='bx bxs-heart'></i> Remove from Favorites
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>You have no favorite movies yet.</p>
-    {% endif %}
+    <section class="favorites-section">
+        <h2>Your Favorites</h2>
+        {% if movies %}
+            <div class="movie-grid" id="movie-list">
+                {% for movie in movies %}
+                    <div class="movie-card">
+                        <a href="{{ url_for('movie_detail', movie_id=movie['id']) }}">
+                            <div class="movie-poster">
+                                <img src="{{ movie['Poster_Link'] }}" alt="{{ movie['Series_Title'] }} Poster">
+                                <!-- SVG Play Icon -->
+                                <div class="play-icon">
+                                    <svg width="50" height="50" viewBox="0 0 24 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8 5v14l11-7L8 5z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </a>
+                        <h3 title="{{ movie['Series_Title'] }}">{{ movie['Series_Title'] | truncate(20, True) }}</h3>
+                        <p><i class='bx bxs-star'></i> {{ movie['IMDB_Rating'] }}/10</p>
+                        <!-- Remove from Favorites -->
+                        <a href="{{ url_for('remove_favorite', movie_id=movie['id']) }}" class="favorite-btn">
+                            <i class='bx bxs-heart'></i> Remove
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>You have no favorite movies yet.</p>
+        {% endif %}
+    </section>
 {% endblock %}
